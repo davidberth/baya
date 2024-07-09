@@ -14,6 +14,11 @@ set(LIBS_DIR "c:/db/libs")
 # Define the paths to the debug and release versions of the libraries
 set(BGFX_DEBUG_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bgfxDebug.lib")
 set(BGFX_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bgfxRelease.lib")
+set(BX_DEBUG_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bxDebug.lib")
+set(BX_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bxRelease.lib")
+set(BIMG_DEBUG_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bimgDebug.lib")
+set(BIMG_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bimgRelease.lib")
+
 set(GLFW_DEBUG_LIB "${LIBS_DIR}/glfw/build/src/Debug/glfw3.lib")
 set(GLFW_RELEASE_LIB "${LIBS_DIR}/glfw/build/src/Release/glfw3.lib")
 
@@ -41,9 +46,9 @@ endif()
 
 # Link the appropriate libraries based on the build type
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_link_libraries(maya PRIVATE ${BGFX_DEBUG_LIB} ${GLFW_DEBUG_LIB})
+    target_link_libraries(maya PRIVATE ${BGFX_DEBUG_LIB} ${BX_DEBUG_LIB} ${BIMG_DEBUG_LIB} ${GLFW_DEBUG_LIB})
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_link_libraries(maya PRIVATE ${BGFX_RELEASE_LIB} ${GLFW_RELEASE_LIB})
+    target_link_libraries(maya PRIVATE ${BGFX_RELEASE_LIB} ${BX_RELEASE_LIB} ${BIMG_RELEASE_LIB} ${GLFW_RELEASE_LIB})
 endif()
 
 

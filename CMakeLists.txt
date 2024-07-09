@@ -39,16 +39,13 @@ if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 	target_compile_options(maya PUBLIC "/Zc:preprocessor")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    # Add the preprocessor definition BX_CONFIG_DEBUG to the target my_target
-    target_compile_definitions(maya PRIVATE BX_CONFIG_DEBUG)
-endif()
-
 # Link the appropriate libraries based on the build type
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_link_libraries(maya PRIVATE ${BGFX_DEBUG_LIB} ${BX_DEBUG_LIB} ${BIMG_DEBUG_LIB} ${GLFW_DEBUG_LIB})
+	target_compile_definitions(maya PRIVATE BX_CONFIG_DEBUG=1)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_link_libraries(maya PRIVATE ${BGFX_RELEASE_LIB} ${BX_RELEASE_LIB} ${BIMG_RELEASE_LIB} ${GLFW_RELEASE_LIB})
+	target_compile_definitions(maya PRIVATE BX_CONFIG_DEBUG=0)
 endif()
 
 

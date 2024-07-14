@@ -1,7 +1,10 @@
-﻿# CMakeList.txt : CMake project for maya, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.26)
+﻿cmake_minimum_required (VERSION 3.28)
+project (maya)
+
+# Correct placement and setting for static runtime library
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -10,7 +13,6 @@ if (POLICY CMP0141)
 endif()
 
 set(LIBS_DIR "c:/db/libs")
-
 # Define the paths to the debug and release versions of the libraries
 set(BGFX_DEBUG_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bgfxDebug.lib")
 set(BGFX_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bgfxRelease.lib")
@@ -18,16 +20,14 @@ set(BX_DEBUG_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bxDebug.lib")
 set(BX_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bxRelease.lib")
 set(BIMG_DEBUG_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bimgDebug.lib")
 set(BIMG_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bimgRelease.lib")
-
 set(GLFW_DEBUG_LIB "${LIBS_DIR}/glfw/build/src/Debug/glfw3.lib")
 set(GLFW_RELEASE_LIB "${LIBS_DIR}/glfw/build/src/Release/glfw3.lib")
 
-
-project (maya)
-
-
 # Add source to this project's executable.
 add_executable (maya "maya.cpp")
+
+target_sources(maya PRIVATE FILE_SET CXX_MODULES FILES "test.ixx")
+
 target_include_directories(maya PRIVATE 
 			"../libs/bx/include"
 			"../libs/bgfx/include"	
@@ -48,8 +48,6 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	target_compile_definitions(maya PRIVATE BX_CONFIG_DEBUG=0)
 endif()
 
-
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET maya PROPERTY CXX_STANDARD 20)
 endif()
-

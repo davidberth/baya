@@ -26,7 +26,7 @@ set(GLFW_RELEASE_LIB "${LIBS_DIR}/glfw/build/src/Release/glfw3.lib")
 # Add source to this project's executable.
 add_executable (maya "maya.cpp")
 
-target_sources(maya PRIVATE FILE_SET CXX_MODULES FILES "test.ixx")
+target_sources(maya PRIVATE FILE_SET CXX_MODULES FILES "window.ixx")
 
 target_include_directories(maya PRIVATE 
 			"../libs/bx/include"
@@ -49,5 +49,5 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET maya PROPERTY CXX_STANDARD 20)
+  set_property(TARGET maya PROPERTY CXX_STANDARD 23)
 endif()

@@ -2,49 +2,34 @@
 #include <bx/bx.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
-#include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
+
 #include <iostream>
-import test;
 
-static bool s_showStats = false;
 
-static void glfw_errorCallback(int error, const char* description)
-{
-	fprintf(stderr, "GLFW error %d: %s\n", error, description);
-}
+import window;
 
-static void glfw_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	Test ts = Test();
-	std::cout << ts.getA() << std::endl;
 
-	if (key == GLFW_KEY_F1 && action == GLFW_RELEASE)
-		s_showStats = !s_showStats;
-}
 
 int main(int argc, char** argv)
 {
-	// Create a GLFW window without an OpenGL context.
-	glfwSetErrorCallback(glfw_errorCallback);
-	if (!glfwInit())
+
+	Window window;
+	if (!window.init())
 		return 1;
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* window = glfwCreateWindow(1024, 768, "helloworld", nullptr, nullptr);
-	if (!window)
-		return 1;
-	glfwSetKeyCallback(window, glfw_keyCallback);
+
 	// Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
 	// Most graphics APIs must be used on the same thread that created the window.
 	bgfx::renderFrame();
 	// Initialize bgfx using the native window handle and window resolution.
 	bgfx::Init init;
 
-	init.platformData.nwh = glfwGetWin32Window(window);
+	init.platformData.nwh = window.getNativeWindow();
+		
 
 	int width, height;
-	glfwGetWindowSize(window, &width, &height);
+	window.getWindowSize(width, height);
+	std::cout << "width: " << width << " height: " << height << std::endl;
+	
 	init.resolution.width = (uint32_t)width;
 	init.resolution.height = (uint32_t)height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
@@ -54,12 +39,16 @@ int main(int argc, char** argv)
 	const bgfx::ViewId kClearView = 0;
 	bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR);
 	bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
+	while (!window.shouldClose())
+	{
+		window.pollEvents();
+	
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
-		glfwGetWindowSize(window, &width, &height);
+		window.getWindowSize(width, height);
+	
 		if (width != oldWidth || height != oldHeight) {
+			std::cout << "resizing" << std::endl;
 			bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
 			bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 		}
@@ -69,6 +58,7 @@ int main(int argc, char** argv)
 		bgfx::frame();
 	}
 	bgfx::shutdown();
-	glfwTerminate();
+	
+	
 	return 0;
 }

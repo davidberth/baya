@@ -47,56 +47,41 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_compile_definitions(baya PRIVATE BX_CONFIG_DEBUG=1)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_link_libraries(baya PRIVATE ${BGFX_RELEASE_LIB} ${BX_RELEASE_LIB} ${BIMG_RELEASE_LIB} ${GLFW_RELEASE_LIB})
-	target_compile_definitions(bfaya PRIVATE BX_CONFIG_DEBUG=0)
+	target_compile_definitions(baya PRIVATE BX_CONFIG_DEBUG=0)
 endif()
 
 
 set_property(TARGET baya PROPERTY CXX_STANDARD 23)
 
-# Define the shader source files
-set(VERTEX_SHADER_SOURCE ${CMAKE_SOURCE_DIR}/shaders/v_simple.sc)
-set(FRAGMENT_SHADER_SOURCE ${CMAKE_SOURCE_DIR}/shaders/f_simple.sc)
-
-# Define the output directories for debug and release builds
-set(DEBUG_OUTPUT_DIR ${CMAKE_BINARY_DIR})
-set(RELEASE_OUTPUT_DIR ${CMAKE_BINARY_DIR})
-
 # Define the shader compiler executable
 set(SHADER_COMPILER ${CMAKE_SOURCE_DIR}/../libs/bgfx/.build/win64_vs2022/bin/shadercRelease.exe)
 set(SHADER_PROFILE spirv)
 
-# Add custom commands to compile the vertex shader
-add_custom_command(
-    OUTPUT ${DEBUG_OUTPUT_DIR}/shaders/v_simple.bin
-    COMMAND ${SHADER_COMPILER} -f ${VERTEX_SHADER_SOURCE} -o ${DEBUG_OUTPUT_DIR}/shaders/v_simple.bin --platform windows --type vertex -i ${CMAKE_SOURCE_DIR}/../libs/bgfx/src -p ${SHADER_PROFILE}
-    DEPENDS ${VERTEX_SHADER_SOURCE}
-    COMMENT "Compiling vertex shader for Debug"
-)
+# Define the output directories for debug and release builds
+set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/shaders)
 
-add_custom_command(
-    OUTPUT ${RELEASE_OUTPUT_DIR}/shaders/v_simple.bin
-    COMMAND ${SHADER_COMPILER} -f ${VERTEX_SHADER_SOURCE} -o ${RELEASE_OUTPUT_DIR}/shaders/v_simple.bin --platform windows --type vertex -i ${CMAKE_SOURCE_DIR}/../libs/bgfx/src -p ${SHADER_PROFILE}
-    DEPENDS ${VERTEX_SHADER_SOURCE}
-    COMMENT "Compiling vertex shader for Release"
-)
+# Find all vertex and fragment shaders
+file(GLOB VERTEX_SHADERS ${CMAKE_SOURCE_DIR}/shaders/v_*.sc)
+file(GLOB FRAGMENT_SHADERS ${CMAKE_SOURCE_DIR}/shaders/f_*.sc)
 
-# Add custom commands to compile the fragment shader
-add_custom_command(
-    OUTPUT ${DEBUG_OUTPUT_DIR}/shaders/f_simple.bin
-    COMMAND ${SHADER_COMPILER} -f ${FRAGMENT_SHADER_SOURCE} -o ${DEBUG_OUTPUT_DIR}/shaders/f_simple.bin --platform windows --type fragment -i ${CMAKE_SOURCE_DIR}/../libs/bgfx/src -p ${SHADER_PROFILE}
-    DEPENDS ${FRAGMENT_SHADER_SOURCE}
-    COMMENT "Compiling fragment shader for Debug"
-)
+# Function to add custom commands for shader compilation
+function(add_shader_compile_commands SHADER_TYPE SHADER_FILES)
+    foreach(SHADER_FILE ${SHADER_FILES})
+        get_filename_component(SHADER_NAME ${SHADER_FILE} NAME_WE)
+        add_custom_command(
+            OUTPUT ${OUTPUT_DIR}/${SHADER_NAME}.bin
+            COMMAND ${SHADER_COMPILER} -f ${SHADER_FILE} -o ${OUTPUT_DIR}/${SHADER_NAME}.bin --platform windows --type ${SHADER_TYPE} -i ${CMAKE_SOURCE_DIR}/../libs/bgfx/src -p ${SHADER_PROFILE}
+            DEPENDS ${SHADER_FILE}
+            COMMENT "Compiling ${SHADER_TYPE} shader: ${SHADER_NAME}"
+        )
+        list(APPEND SHADER_BINARIES ${OUTPUT_DIR}/${SHADER_NAME}.bin)
+    endforeach()
+    set(SHADER_BINARIES ${SHADER_BINARIES} PARENT_SCOPE)
+endfunction()
 
-add_custom_command(
-    OUTPUT ${RELEASE_OUTPUT_DIR}/shaders/f_simple.bin
-    COMMAND ${SHADER_COMPILER} -f ${FRAGMENT_SHADER_SOURCE} -o ${RELEASE_OUTPUT_DIR}/shaders/f_simple.bin --platform windows --type fragment  -i ${CMAKE_SOURCE_DIR}/../libs/bgfx/src -p ${SHADER_PROFILE}
-    DEPENDS ${FRAGMENT_SHADER_SOURCE}
-    COMMENT "Compiling fragment shader for Release"
-)
+# Add custom commands for vertex and fragment shaders
+add_shader_compile_commands(vertex "${VERTEX_SHADERS}")
+add_shader_compile_commands(fragment "${FRAGMENT_SHADERS}")
 
-# Add custom targets to ensure the shaders are built as part of the build process
-add_custom_target(compile_shaders ALL
-    DEPENDS $<IF:$<CONFIG:Debug>,${DEBUG_OUTPUT_DIR}/shaders/v_simple.bin,${RELEASE_OUTPUT_DIR}/shaders/v_simple.bin>
-            $<IF:$<CONFIG:Debug>,${DEBUG_OUTPUT_DIR}/shaders/f_simple.bin,${RELEASE_OUTPUT_DIR}/shaders/f_simple.bin>
-)
+# Add custom target to ensure shaders are built as part of the build process
+add_custom_target(compile_shaders ALL DEPENDS ${SHADER_BINARIES})

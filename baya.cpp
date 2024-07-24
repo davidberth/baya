@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 
 import window;
@@ -51,21 +52,25 @@ const uint16_t s_cubeTriList[] =
 
 
 bgfx::ShaderHandle loadShader(const char* _name) {
-	char* data = new char[2048];
-	std::ifstream file;
-	size_t fileSize;
-		file.open(_name);
-	if (file.is_open()) {
-		file.seekg(0, std::ios::end);
-		fileSize = file.tellg();
-		file.seekg(0, std::ios::beg);
-		file.read(data, fileSize);
-		file.close();
+	std::ifstream file(_name, std::ios::binary | std::ios::ate);
+	if (!file.is_open()) {
+		std::cerr << "Failed to open shader file: " << _name << std::endl;
+		return BGFX_INVALID_HANDLE;
 	}
-	const bgfx::Memory* mem = bgfx::copy(data, fileSize + 1);
-	mem->data[mem->size - 1] = '\0';
+
+	std::streamsize fileSize = file.tellg();
+	file.seekg(0, std::ios::beg);
+
+	std::vector<char> data(fileSize);
+	if (!file.read(data.data(), fileSize)) {
+		std::cerr << "Failed to read shader file: " << _name << std::endl;
+		return BGFX_INVALID_HANDLE;
+	}
+
+	const bgfx::Memory* mem = bgfx::copy(data.data(), static_cast<uint32_t>(fileSize));
 	bgfx::ShaderHandle handle = bgfx::createShader(mem);
 	bgfx::setName(handle, _name);
+
 	return handle;
 }
 

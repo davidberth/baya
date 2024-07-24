@@ -1,0 +1,3 @@
+..\libs\bgfx\.build\win64_vs2022\bin\shadercRelease.exe -f shaders\v_simple.sc -o v_simple.bin --platform windows --type vertex --verbose -i ..\libs\bgfx\src -p s_5_0
+
+..\libs\bgfx\.build\win64_vs2022\bin\shadercRelease.exe -f shaders\f_simple.sc -o f_simple.bin --platform windows --type fragment --verbose -i ..\libs\bgfx\src -p s_5_0

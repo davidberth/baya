@@ -12,14 +12,14 @@ static bool s_showStats = false;
 
 void glfw_errorCallback(int error, const char* description)
 {
-	fprintf(stderr, "GLFW error %d: %s\n", error, description);
+	std::cout << "GLFW error " << error << " description" << std::endl;
 }
 
 void glfw_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 
-	if (key == GLFW_KEY_F1 && action == GLFW_RELEASE)
-		s_showStats = !s_showStats;
+	//if (key == GLFW_KEY_F1 && action == GLFW_RELEASE)
+	//	s_showStats = !s_showStats;
 }
 
 export class Window {

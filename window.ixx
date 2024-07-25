@@ -8,62 +8,123 @@ module;
 
 export module window;
 
-static bool s_showStats = false;
+GLFWwindow* window;
+int resolution_width;
+int resolution_height;
+
+struct size_option
+{
+	int index;
+	int key;
+	float size_ratio;
+	int monitor;
+};
+
+
+size_option size_options[] = 
+  { {0, GLFW_KEY_F1, 0.2f, 0}, 
+	{1, GLFW_KEY_F2, 0.4f, 0}, 
+	{2, GLFW_KEY_F3, 0.6f, 0}, 
+	{3, GLFW_KEY_F4, 0.8f, 0},
+	{4, GLFW_KEY_F5, 1.0f, 0},
+	{5, GLFW_KEY_F6, 1.0f, 1}, 
+};
+
+int current_size = 2;
 
 void glfw_errorCallback(int error, const char* description)
 {
 	std::cout << "GLFW error " << error << " description" << std::endl;
 }
 
-void glfw_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void resize_window()
 {
+	
+	float size_rat = size_options[current_size].size_ratio;
 
-	//if (key == GLFW_KEY_F1 && action == GLFW_RELEASE)
-	//	s_showStats = !s_showStats;
+	if (size_rat > 0.9f)
+	{
+		int monitor_count;
+		GLFWmonitor **monitors = glfwGetMonitors(&monitor_count);
+		int index = size_options[current_size].monitor;
+		if (index > monitor_count - 1) index = 0;
+
+		const GLFWvidmode* mode = glfwGetVideoMode(monitors[index]);
+
+		int mwidth = mode->width;
+		int mheight = mode->height;
+
+		glfwSetWindowMonitor(window, monitors[index], 0, 0, mwidth, mheight, GLFW_DONT_CARE);
+		return;
+	}
+	else
+	{
+		int sizex = int(float(resolution_width) * size_rat);
+		int sizey = int(float(resolution_height) * size_rat);
+		glfwSetWindowMonitor(window, NULL, resolution_width / 2 - sizex / 2, resolution_height / 2 - sizey / 2, sizex, sizey, 0);
+		
+	}
 }
 
-export class Window {
-private:
-	GLFWwindow* window;
+void glfw_keyCallback(GLFWwindow* lwindow, int key, int scancode, int action, int mods)
+{
+	for (auto& option : size_options)
+	{
+		if (key == option.key && action == GLFW_PRESS)
+		{
+			current_size = option.index;
+			resize_window();
+		}
+	}
+}
 
-public:
-	Window() {}
-	~Window() 
-	{
-		glfwDestroyWindow(window);
-		glfwTerminate();
-	}
-	bool init()
-	{
-		glfwSetErrorCallback(glfw_errorCallback);
-		if (!glfwInit())
-			return false;
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		window = glfwCreateWindow(1024, 768, "helloworld", nullptr, nullptr);
-		if (!window)
-			return false;
-		glfwSetKeyCallback(window, glfw_keyCallback);
-		return true;
-
-	}
-	HWND getNativeWindow()
-	{
-		return glfwGetWin32Window(window);
-	}
-	void getWindowSize(int &width, int &height)
-	{
+export bool init_window()
+{
+	glfwSetErrorCallback(glfw_errorCallback);
+	if (!glfwInit())
+		return false;
 		
-		glfwGetWindowSize(window, &width, &height);
-	}
-	bool shouldClose()
-	{
-		return glfwWindowShouldClose(window);
-	}
-	void pollEvents()
-	{
-		glfwPollEvents();
-	}
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
+	resolution_width = mode->width;
+	resolution_height = mode->height;
+		
+
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	window = glfwCreateWindow(100, 100, "Baya version 0.1.0", nullptr, nullptr);
 	
+	if (!window)
+		return false;
+	resize_window();
 
-};
+	glfwSetKeyCallback(window, glfw_keyCallback);
+	return true;
+
+}
+
+export HWND get_native_window()
+{
+	return glfwGetWin32Window(window);
+}
+
+export void get_window_size(int &width, int &height)
+{
+		
+	glfwGetWindowSize(window, &width, &height);
+}
+
+export bool window_should_close()
+{
+	return glfwWindowShouldClose(window);
+}
+
+export void poll_events()
+{
+	glfwPollEvents();
+}
+	
+export void cleanup_window()
+{
+	glfwDestroyWindow(window);
+	glfwTerminate();
+}

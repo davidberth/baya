@@ -81,8 +81,7 @@ bgfx::ProgramHandle m_program; // we create a program handle
 int main(int argc, char** argv)
 {
 
-	Window window;
-	if (!window.init())
+	if (!init_window())
 		return 1;
 
 	// Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
@@ -91,11 +90,11 @@ int main(int argc, char** argv)
 	// Initialize bgfx using the native window handle and window resolution.
 	bgfx::Init init;
 
-	init.platformData.nwh = window.getNativeWindow();
+	init.platformData.nwh = get_native_window();
 		
 
 	int width, height;
-	window.getWindowSize(width, height);
+	get_window_size(width, height);
 	
 	init.resolution.width = (uint32_t)width;
 	init.resolution.height = (uint32_t)height;
@@ -132,13 +131,13 @@ int main(int argc, char** argv)
 
 
 
-	while (!window.shouldClose())
+	while (!window_should_close())
 	{
-		window.pollEvents();
+		poll_events();
 	
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
-		window.getWindowSize(width, height);
+		get_window_size(width, height);
 	
 		if (width != oldWidth || height != oldHeight) {
 			bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
@@ -195,6 +194,7 @@ int main(int argc, char** argv)
 		bgfx::frame();
 	}
 	bgfx::shutdown();
+	cleanup_window();
 	
 	
 	return 0;

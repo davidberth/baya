@@ -1,4 +1,5 @@
-﻿#include <stdio.h>
+﻿module;
+
 #include <bx/bx.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
@@ -8,7 +9,9 @@
 #include <fstream>
 #include <vector>
 
+#include <GLFW/glfw3.h>
 
+export module baya;
 import window;
 
 struct PosColorVertex {
@@ -77,8 +80,18 @@ bgfx::ShaderHandle loadShader(const char* _name) {
 bgfx::VertexBufferHandle m_vbh;
 bgfx::IndexBufferHandle m_ibh;
 bgfx::ProgramHandle m_program; // we create a program handle
+bgfx::ShaderHandle vsh;
+bgfx::ShaderHandle fsh;
 
-int main(int argc, char** argv)
+// Define the entry point based on the build type
+#ifdef ENTRY_POINT
+#define MAIN_ENTRY ENTRY_POINT
+#else
+#define MAIN_ENTRY main
+#endif
+
+
+export int init_game()
 {
 
 	if (!init_window())
@@ -91,11 +104,11 @@ int main(int argc, char** argv)
 	bgfx::Init init;
 
 	init.platformData.nwh = get_native_window();
-		
+
 
 	int width, height;
 	get_window_size(width, height);
-	
+
 	init.resolution.width = (uint32_t)width;
 	init.resolution.height = (uint32_t)height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
@@ -116,29 +129,33 @@ int main(int argc, char** argv)
 		bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
 	);
 
-	bgfx::ShaderHandle vsh = loadShader("shaders\\v_simple.bin");
-	bgfx::ShaderHandle fsh = loadShader("shaders\\f_simple.bin");
+	vsh = loadShader("shaders\\v_simple.bin");
+	fsh = loadShader("shaders\\f_simple.bin");
 
 	m_program = bgfx::createProgram(vsh, fsh, true);
+	return 0;
+}
 
+export void main_loop()
+{
+	int width, height;
+	get_window_size(width, height);
 
 	// Set view 0 to the same dimensions as the window and to clear the color buffer.
 	const bgfx::ViewId kClearView = 0;
 	bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
 	bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
-	bgfx::touch(0); 
-
-
+	bgfx::touch(0);
 
 	while (!window_should_close())
 	{
 		poll_events();
-	
+
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
 		get_window_size(width, height);
-	
+
 		if (width != oldWidth || height != oldHeight) {
 			bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
 		}
@@ -164,9 +181,6 @@ int main(int argc, char** argv)
 			width,
 			height);
 
-
-
-
 		bgfx::touch(kClearView);
 		float mtx[16];
 		bx::mtxRotateY(mtx, 0.0f);
@@ -189,13 +203,15 @@ int main(int argc, char** argv)
 		// Submit primitive for rendering to view 0.
 		bgfx::submit(0, m_program);
 
-		
-	
 		bgfx::frame();
 	}
+	return;
+}
+
+export void cleanup()
+{
 	bgfx::shutdown();
 	cleanup_window();
 	
-	
-	return 0;
+	return;
 }

@@ -16,21 +16,22 @@ struct size_option
 {
 	int index;
 	int key;
-	float size_ratio;
+	float size_ratio_x;
+	float size_ratio_y;
 	int monitor;
 };
 
 
 size_option size_options[] = 
-  { {0, GLFW_KEY_F1, 0.2f, 0}, 
-	{1, GLFW_KEY_F2, 0.4f, 0}, 
-	{2, GLFW_KEY_F3, 0.6f, 0}, 
-	{3, GLFW_KEY_F4, 0.8f, 0},
-	{4, GLFW_KEY_F5, 1.0f, 0},
-	{5, GLFW_KEY_F6, 1.0f, 1}, 
+  { {0, GLFW_KEY_F1, 0.2f, 0.3f, 0}, 
+	{1, GLFW_KEY_F2, 0.4f, 0.5f, 0}, 
+	{2, GLFW_KEY_F3, 0.6f, 0.7f, 0}, 
+	{3, GLFW_KEY_F4, 0.8f, 0.85f, 0},
+	{4, GLFW_KEY_F5, 1.0f, 1.0f, 0},
+	{5, GLFW_KEY_F6, 1.0f, 1.0f, 1}, 
 };
 
-int current_size = 2;
+int current_size = 1;
 
 void glfw_errorCallback(int error, const char* description)
 {
@@ -40,7 +41,7 @@ void glfw_errorCallback(int error, const char* description)
 void resize_window()
 {
 	
-	float size_rat = size_options[current_size].size_ratio;
+	float size_rat = size_options[current_size].size_ratio_x;
 
 	if (size_rat > 0.9f)
 	{
@@ -59,8 +60,8 @@ void resize_window()
 	}
 	else
 	{
-		int sizex = int(float(resolution_width) * size_rat);
-		int sizey = int(float(resolution_height) * size_rat);
+		int sizex = int(float(resolution_width) * size_options[current_size].size_ratio_x);
+		int sizey = int(float(resolution_height) * size_options[current_size].size_ratio_y);
 		glfwSetWindowMonitor(window, NULL, resolution_width / 2 - sizex / 2, resolution_height / 2 - sizey / 2, sizex, sizey, 0);
 		
 	}

@@ -14,12 +14,19 @@
 export module baya;
 import window;
 
+
+bgfx::VertexBufferHandle m_vbh;
+bgfx::IndexBufferHandle m_ibh;
+bgfx::ProgramHandle m_program; // we create a program handle
+bgfx::ShaderHandle vsh;
+bgfx::ShaderHandle fsh;
+
 struct PosColorVertex {
 	// 3d space position
 	float m_x;
 	float m_y;
 	float m_z;
-	// Color value
+	// color value
 	uint32_t m_abgr;
 
 	static void init() {
@@ -76,19 +83,6 @@ bgfx::ShaderHandle loadShader(const char* _name) {
 
 	return handle;
 }
-
-bgfx::VertexBufferHandle m_vbh;
-bgfx::IndexBufferHandle m_ibh;
-bgfx::ProgramHandle m_program; // we create a program handle
-bgfx::ShaderHandle vsh;
-bgfx::ShaderHandle fsh;
-
-// Define the entry point based on the build type
-#ifdef ENTRY_POINT
-#define MAIN_ENTRY ENTRY_POINT
-#else
-#define MAIN_ENTRY main
-#endif
 
 
 export int init_game()
@@ -210,7 +204,13 @@ export void main_loop()
 
 export void cleanup()
 {
+	bgfx::destroy(m_vbh);
+	bgfx::destroy(m_ibh);
+	bgfx::destroy(m_program);
+	bgfx::destroy(vsh);
+	bgfx::destroy(fsh);
 	bgfx::shutdown();
+
 	cleanup_window();
 	
 	return;

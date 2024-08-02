@@ -13,6 +13,7 @@
 
 export module baya;
 import window;
+import camera;
 
 
 bgfx::VertexBufferHandle m_vbh;
@@ -20,6 +21,8 @@ bgfx::IndexBufferHandle m_ibh;
 bgfx::ProgramHandle m_program; // we create a program handle
 bgfx::ShaderHandle vsh;
 bgfx::ShaderHandle fsh;
+
+Camera camera;
 
 struct PosColorVertex {
 	// 3d space position
@@ -110,6 +113,8 @@ export int init_game()
 	if (!bgfx::init(init))
 		return 1;
 
+	camera.init();
+	camera.set_window_size(width, height);
 
 	PosColorVertex::init();
 	m_vbh = bgfx::createVertexBuffer(
@@ -152,28 +157,15 @@ export void main_loop()
 
 		if (width != oldWidth || height != oldHeight) {
 			bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
+			camera.set_window_size(width, height);
 		}
-
-		const bx::Vec3 at = { 0.0f, 0.0f,   0.0f };
-		const bx::Vec3 eye = { 0.0f, 0.0f, 10.0f };
-
-		// Set view and projection matrix for view 0.
-		float view[16];
-		bx::mtxLookAt(view, eye, at);
-
-		float proj[16];
-		bx::mtxProj(proj,
-			60.0f,
-			float(width) / float(height),
-			0.1f, 100.0f,
-			bgfx::getCaps()->homogeneousDepth);
-
-		bgfx::setViewTransform(0, view, proj);
 
 		// Set view 0 default viewport.
 		bgfx::setViewRect(0, 0, 0,
 			width,
 			height);
+
+		camera.apply();
 
 		bgfx::touch(kClearView);
 		float mtx[16];

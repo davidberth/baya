@@ -50,10 +50,10 @@ bgfx::VertexLayout PosColorVertex::ms_decl;
 
 PosColorVertex s_cubeVertices[] =
 {
-	{  0.5f,  0.5f, 0.0f, 0xff0000ff },
-	{  0.5f, -0.5f, 0.0f, 0xff0000ff },
-	{ -0.5f, -0.5f, 0.0f, 0xff00ff00 },
-	{ -0.5f,  0.5f, 0.0f, 0xff00ff00 }
+	{  0.5f,  0.5f, 0.0f, 0xffffffff },
+	{  0.5f, -0.5f, 0.0f, 0xffffffff },
+	{ -0.5f, -0.5f, 0.0f, 0xffffffff },
+	{ -0.5f,  0.5f, 0.0f, 0xffffffff }
 };
 
 const uint16_t s_cubeTriList[] =
@@ -115,6 +115,7 @@ export int init_game()
 
 	camera.init();
 	camera.set_window_size(width, height);
+	camera.set_height(3.0f);
 
 	PosColorVertex::init();
 	m_vbh = bgfx::createVertexBuffer(

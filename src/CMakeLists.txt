@@ -9,12 +9,13 @@ set(BIMG_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bimgRelease.lib")
 set(GLFW_DEBUG_LIB "${LIBS_DIR}/glfw/build/src/Debug/glfw3.lib")
 set(GLFW_RELEASE_LIB "${LIBS_DIR}/glfw/build/src/Release/glfw3.lib")
 
+
 # Add source to this project's executable.
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_executable(baya WIN32 "main.cpp")
+    add_executable(baya WIN32 "main.cpp" "imguio.cpp" "imgui.cpp" "imgui_draw.cpp" "imgui_widgets.cpp" "imgui_tables.cpp")
     target_compile_definitions(baya PRIVATE ENTRY_POINT=WinMain)
 else()
-    add_executable(baya "main.cpp" )
+    add_executable(baya "main.cpp" "imguio.cpp" "imgui.cpp" "imgui_draw.cpp" "imgui_widgets.cpp" "imgui_tables.cpp")
     target_compile_definitions(baya PRIVATE ENTRY_POINT=main)
 endif()
 
@@ -28,8 +29,12 @@ target_sources(baya PRIVATE FILE_SET CXX_MODULES FILES "baya.ixx" "window.ixx" "
 target_include_directories(baya PRIVATE 
 			"${LIBS_DIR}/bx/include"
 			"${LIBS_DIR}/bgfx/include"	
-			"${LIBS_DIR}/bgimg/include"
+			"${LIBS_DIR}/bimg/include"
 			"${LIBS_DIR}/glfw/include"
+			"${LIBS_DIR}/bgfx/examples/common/imgui"
+			"${LIBS_DIR}/bgfx/3rdparty"
+			"${LIBS_DIR}/bgfx/3rdparty/dear-imgui"
+			"${LIBS_DIR}/bx/include/compat/msvc"
 )
 if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 	target_compile_options(baya PUBLIC "/Zc:__cplusplus")

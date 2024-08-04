@@ -9,6 +9,8 @@
 #include <fstream>
 #include <vector>
 
+#include "imgui.h"
+
 #include <GLFW/glfw3.h>
 
 export module baya;
@@ -50,10 +52,10 @@ bgfx::VertexLayout PosColorVertex::ms_decl;
 
 PosColorVertex s_cubeVertices[] =
 {
-	{  0.5f,  0.5f, 0.0f, 0xffffffff },
-	{  0.5f, -0.5f, 0.0f, 0xffffffff },
-	{ -0.5f, -0.5f, 0.0f, 0xffffffff },
-	{ -0.5f,  0.5f, 0.0f, 0xffffffff }
+	{  0.5f,  0.5f, 0.0f, 0xffffff00 },
+	{  0.5f, -0.5f, 0.0f, 0xffffff00 },
+	{ -0.5f, -0.5f, 0.0f, 0xffffff11 },
+	{ -0.5f,  0.5f, 0.0f, 0xffffff11 }
 };
 
 const uint16_t s_cubeTriList[] =
@@ -133,6 +135,8 @@ export int init_game()
 	fsh = loadShader("shaders\\f_simple.bin");
 
 	m_program = bgfx::createProgram(vsh, fsh, true);
+	imguiCreate();
+
 	return 0;
 }
 
@@ -151,6 +155,10 @@ export void main_loop()
 	while (!window_should_close())
 	{
 		poll_events();
+
+
+
+		
 
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
@@ -190,7 +198,22 @@ export void main_loop()
 		// Submit primitive for rendering to view 0.
 		bgfx::submit(0, m_program);
 
+		
+		//int32_t _mx, int32_t _my, uint8_t _button, int32_t _scroll, uint16_t _width, uint16_t _height, int _inputChar, bgfx::ViewId _viewId
+		imguiBeginFrame(100, 100, 0, 0, width, height, 0, 0);
+
+		//ImGui::NewFrame();
+		ImGui::Begin("My DearImGui Window");
+		for (int i = 0; i < 10; i++) ImGui::Text("hello, world               ");
+		ImGui::End();
+		ImGui::Render();
+		imguiEndFrame();
+
 		bgfx::frame();
+
+	
+
+
 	}
 	return;
 }

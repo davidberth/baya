@@ -79,6 +79,19 @@ void glfw_keyCallback(GLFWwindow* lwindow, int key, int scancode, int action, in
 	}
 }
 
+export void get_mouse_pos(double& xpos, double& ypos)
+{
+	glfwGetCursorPos(window, &xpos, &ypos);
+}
+
+export int get_mouse_button_state()
+{
+	uint8_t state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+	state+= glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) << 1;
+	state+= glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) << 2;
+	return state;
+}
+
 export bool init_window()
 {
 	glfwSetErrorCallback(glfw_errorCallback);

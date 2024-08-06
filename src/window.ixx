@@ -12,6 +12,8 @@ GLFWwindow* window;
 int resolution_width;
 int resolution_height;
 
+
+
 struct size_option
 {
 	int index;
@@ -77,6 +79,7 @@ void glfw_keyCallback(GLFWwindow* lwindow, int key, int scancode, int action, in
 			resize_window();
 		}
 	}
+
 }
 
 export void get_mouse_pos(double& xpos, double& ypos)

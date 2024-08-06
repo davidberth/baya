@@ -79,6 +79,8 @@ void glfw_keyCallback(GLFWwindow* lwindow, int key, int scancode, int action, in
 			resize_window();
 		}
 	}
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(lwindow, GLFW_TRUE);
 
 }
 

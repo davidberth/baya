@@ -11,8 +11,7 @@ export module window;
 GLFWwindow* window;
 int resolution_width;
 int resolution_height;
-
-
+GLFWcursor* cursor;
 
 struct size_option
 {
@@ -117,6 +116,9 @@ export bool init_window()
 	resize_window();
 
 	glfwSetKeyCallback(window, glfw_keyCallback);
+
+	cursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
+	glfwSetCursor(window, cursor);
 	return true;
 
 }
@@ -145,5 +147,6 @@ export void poll_events()
 export void cleanup_window()
 {
 	glfwDestroyWindow(window);
+	delete cursor;
 	glfwTerminate();
 }

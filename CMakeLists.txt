@@ -16,5 +16,6 @@ if (POLICY CMP0141)
 endif()
 
 
+add_subdirectory(imgui)
 add_subdirectory(src)
 add_subdirectory(shaders)

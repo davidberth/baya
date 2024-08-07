@@ -145,7 +145,7 @@ export int init_game()
 	
 	ImGuiStyle& style = ImGui::GetStyle();
 
-	style.Alpha = 1.0f;
+	style.Alpha = 0.9f;
 	style.DisabledAlpha = 1.0f;
 	style.WindowPadding = ImVec2(12.0f, 12.0f);
 	style.WindowRounding = 11.5f;
@@ -323,7 +323,7 @@ export void main_loop()
 		imguiBeginFrame(mx, my, button_state, 0, width, height, 0);
 
 
-		ImGui::Begin("My DearImGui Window");
+		ImGui::Begin("Baya Entities");
 		for (int i = 0; i < 3; i++) ImGui::Text("hello, world");
 
 		ImGui::Checkbox("Check me", &check_state);

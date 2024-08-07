@@ -12,16 +12,15 @@ set(GLFW_RELEASE_LIB "${LIBS_DIR}/glfw/build/src/Release/glfw3.lib")
 
 # Add source to this project's executable.
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_executable(baya WIN32 "main.cpp" "imguio.cpp" "imgui.cpp" "imgui_draw.cpp" "imgui_widgets.cpp" "imgui_tables.cpp")
+    add_executable(baya WIN32 "main.cpp")
     target_compile_definitions(baya PRIVATE ENTRY_POINT=WinMain)
 else()
-    add_executable(baya "main.cpp" "imguio.cpp" "imgui.cpp" "imgui_draw.cpp" "imgui_widgets.cpp" "imgui_tables.cpp")
+    add_executable(baya "main.cpp")
     target_compile_definitions(baya PRIVATE ENTRY_POINT=main)
 endif()
 
 set_target_properties(baya PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${TargetName}/"
-    
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${TargetName}/"    
 )
 
 target_sources(baya PRIVATE FILE_SET CXX_MODULES FILES "baya.ixx" "window.ixx" "camera.ixx")
@@ -33,8 +32,6 @@ target_include_directories(baya PRIVATE
 			"${LIBS_DIR}/glfw/include"
 			"${LIBS_DIR}/bgfx/examples/common/imgui"
 			"${LIBS_DIR}/bgfx/3rdparty"
-			"${LIBS_DIR}/bgfx/3rdparty/dear-imgui"
-			"${LIBS_DIR}/bx/include/compat/msvc"
 )
 if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 	target_compile_options(baya PUBLIC "/Zc:__cplusplus")
@@ -43,9 +40,9 @@ endif()
 
 # Link the appropriate libraries based on the build type
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_link_libraries(baya PRIVATE ${BGFX_DEBUG_LIB} ${BX_DEBUG_LIB} ${BIMG_DEBUG_LIB} ${GLFW_DEBUG_LIB})
+    target_link_libraries(baya PRIVATE ${BGFX_DEBUG_LIB} ${BX_DEBUG_LIB} ${BIMG_DEBUG_LIB} ${GLFW_DEBUG_LIB} imgui/imgui)
 	target_compile_definitions(baya PRIVATE BX_CONFIG_DEBUG=1)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    target_link_libraries(baya PRIVATE ${BGFX_RELEASE_LIB} ${BX_RELEASE_LIB} ${BIMG_RELEASE_LIB} ${GLFW_RELEASE_LIB})
+    target_link_libraries(baya PRIVATE ${BGFX_RELEASE_LIB} ${BX_RELEASE_LIB} ${BIMG_RELEASE_LIB} ${GLFW_RELEASE_LIB} imgui/imgui)
 	target_compile_definitions(baya PRIVATE BX_CONFIG_DEBUG=0)
 endif()

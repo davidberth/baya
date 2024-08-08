@@ -146,7 +146,7 @@ export void poll_events()
 	
 export void cleanup_window()
 {
+
 	glfwDestroyWindow(window);
-	delete cursor;
 	glfwTerminate();
 }

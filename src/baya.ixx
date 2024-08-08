@@ -36,7 +36,13 @@ struct PosColorVertex {
 	float m_y;
 	float m_z;
 	// color value
-	uint32_t m_abgr;
+	uint8_t m_hue;
+	uint8_t m_saturation;
+	uint8_t m_value;
+	uint8_t m_alpha;
+
+	float m_ex;
+	float m_ey;
 
 	static void init() {
 		// start the attribute declaration
@@ -46,6 +52,8 @@ struct PosColorVertex {
 			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 			// and a uint8 color value that denotes color
 			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+			// add edge coordinates
+			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
 			.end();
 	};
 
@@ -56,10 +64,10 @@ bgfx::VertexLayout PosColorVertex::ms_decl;
 
 PosColorVertex s_cubeVertices[] =
 {
-	{  0.5f,  0.5f, 0.0f, 0xff0000ff },
-	{  0.5f, -0.5f, 0.0f, 0xff0000ff },
-	{ -0.5f, -0.5f, 0.0f, 0xff0000ee },
-	{ -0.5f,  0.5f, 0.0f, 0xff0000ee }
+	{  0.5f,  0.5f, 0.0f, 0, 255, 255, 255, 0.0f, 0.0f },
+	{  0.5f, -0.5f, 0.0f, 0, 255, 255, 255, 1.0f, 0.0f },
+	{ -0.5f, -0.5f, 0.0f, 0, 122, 255, 255, 1.0f, 1.0f },
+	{ -0.5f,  0.5f, 0.0f, 0, 122, 255, 255, 0.0f, 1.0f }
 };
 
 const uint16_t s_cubeTriList[] =

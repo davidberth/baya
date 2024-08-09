@@ -21,9 +21,14 @@ import camera;
 
 bgfx::VertexBufferHandle m_vbh;
 bgfx::IndexBufferHandle m_ibh;
+bgfx::IndexBufferHandle m_ibhl;
 bgfx::ProgramHandle m_program; // we create a program handle
+bgfx::ProgramHandle m_programl;
 bgfx::ShaderHandle vsh;
 bgfx::ShaderHandle fsh;
+
+bgfx::ShaderHandle vshl;
+bgfx::ShaderHandle fshl;
 
 
 bool check_state = false;
@@ -40,9 +45,7 @@ struct PosColorVertex {
 	uint8_t m_saturation;
 	uint8_t m_value;
 	uint8_t m_alpha;
-
-	float m_ex;
-	float m_ey;
+;
 
 	static void init() {
 		// start the attribute declaration
@@ -52,8 +55,6 @@ struct PosColorVertex {
 			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 			// and a uint8 color value that denotes color
 			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-			// add edge coordinates
-			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
 			.end();
 	};
 
@@ -64,16 +65,24 @@ bgfx::VertexLayout PosColorVertex::ms_decl;
 
 PosColorVertex s_cubeVertices[] =
 {
-	{  0.5f,  0.5f, 0.0f, 0, 255, 255, 255, 0.0f, 0.0f },
-	{  0.5f, -0.5f, 0.0f, 0, 255, 255, 255, 1.0f, 0.0f },
-	{ -0.5f, -0.5f, 0.0f, 0, 122, 255, 255, 1.0f, 1.0f },
-	{ -0.5f,  0.5f, 0.0f, 0, 122, 255, 255, 0.0f, 1.0f }
+	{  0.5f,  0.5f, 0.0f, 0, 255, 255, 255},
+	{  0.5f, -0.5f, 0.0f, 0, 255, 255, 255},
+	{ -0.5f, -0.5f, 0.0f, 0, 122, 255, 255},
+	{ -0.5f,  0.5f, 0.0f, 0, 122, 255, 255},
 };
 
 const uint16_t s_cubeTriList[] =
 {
 	0,1,3,
 	1,2,3
+};
+
+const uint16_t s_cubeLineList[] = 
+{
+	0,1,
+	1,2,
+	2,3,
+	3,0
 };
 
 
@@ -143,14 +152,23 @@ export int init_game()
 		bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
 	);
 
+	m_ibhl = bgfx::createIndexBuffer(
+		// Static data can be passed with bgfx::makeRef
+		bgfx::makeRef(s_cubeLineList, sizeof(s_cubeLineList))
+	);
+
 	vsh = loadShader("shaders\\v_simple.bin");
 	fsh = loadShader("shaders\\f_simple.bin");
 
 	m_program = bgfx::createProgram(vsh, fsh, true);
+
+	vshl = loadShader("shaders\\v_simple_edge.bin");
+	fshl = loadShader("shaders\\f_simple_edge.bin");
+
+	m_programl = bgfx::createProgram(vshl, fshl, true);
+
 	imguiCreate(20.0f);
 
-
-	
 	ImGuiStyle& style = ImGui::GetStyle();
 
 	style.Alpha = 0.9f;
@@ -319,12 +337,22 @@ export void main_loop()
 		bgfx::setIndexBuffer(m_ibh);
 
 		// Set render states.
-		bgfx::setState(BGFX_STATE_DEFAULT);
+		bgfx::setState(BGFX_STATE_WRITE_RGB 
+			| BGFX_STATE_WRITE_A 
+			| BGFX_STATE_MSAA);
 
 		// Submit primitive for rendering to view 0.
 		bgfx::submit(0, m_program);
 
+		bgfx::setVertexBuffer(0, m_vbh);
 
+		bgfx::setIndexBuffer(m_ibhl);
+		bgfx::setState(BGFX_STATE_WRITE_RGB
+			| BGFX_STATE_WRITE_A
+			| BGFX_STATE_PT_LINES
+			| BGFX_STATE_MSAA | BGFX_STATE_LINEAA);
+
+		bgfx::submit(0, m_programl);
 		
 		get_mouse_pos(mx, my);
 		uint8_t button_state = get_mouse_button_state();

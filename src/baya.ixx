@@ -36,10 +36,9 @@ bool check_state = false;
 Camera camera;
 
 struct PosColorVertex {
-	// 3d space position
+	// 2d space position
 	float m_x;
 	float m_y;
-	float m_z;
 	// color value
 	uint8_t m_hue;
 	uint8_t m_saturation;
@@ -52,7 +51,7 @@ struct PosColorVertex {
 		ms_decl
 			.begin()
 			// Has three float values that denote position
-			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
 			// and a uint8 color value that denotes color
 			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
 			.end();
@@ -65,10 +64,10 @@ bgfx::VertexLayout PosColorVertex::ms_decl;
 
 PosColorVertex s_cubeVertices[] =
 {
-	{  0.5f,  0.5f, 0.0f, 0, 255, 255, 255},
-	{  0.5f, -0.5f, 0.0f, 0, 255, 255, 255},
-	{ -0.5f, -0.5f, 0.0f, 0, 122, 255, 255},
-	{ -0.5f,  0.5f, 0.0f, 0, 122, 255, 255},
+	{  0.5f,  0.5f, 0, 255, 255, 255},
+	{  0.5f, -0.5f, 15, 255, 255, 255},
+	{ -0.5f, -0.5f, 55, 255, 122, 255},
+	{ -0.5f,  0.5f, 100, 255, 125, 255},
 };
 
 const uint16_t s_cubeTriList[] =
@@ -276,7 +275,7 @@ export void main_loop()
 
 	double mx, my;
 
-
+	float rot = 0.0f;
 
 	/*
 	uint8_t* data;
@@ -322,12 +321,15 @@ export void main_loop()
 
 		bgfx::touch(kClearView);
 		float mtx[16];
-		bx::mtxRotateY(mtx, 0.0f);
+		bx::mtxRotateZ(mtx, rot);
 
 		// position x,y,z
 		mtx[12] = 0.0f;
 		mtx[13] = 0.0f;
 		mtx[14] = 0.0f;
+
+		rot += 0.01f;
+		if (rot > bx::kPi2) rot -= bx::kPi2;
 
 		// Set model matrix for rendering.
 		bgfx::setTransform(mtx);
@@ -343,6 +345,8 @@ export void main_loop()
 
 		// Submit primitive for rendering to view 0.
 		bgfx::submit(0, m_program);
+
+		bgfx::setTransform(mtx);
 
 		bgfx::setVertexBuffer(0, m_vbh);
 

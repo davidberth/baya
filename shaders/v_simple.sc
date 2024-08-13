@@ -13,7 +13,7 @@ vec3 hsv2rgb(vec3 c)
 
 void main()
 {
-    gl_Position = mul(u_modelViewProj, vec4(a_position, 1.0) );
+    gl_Position = mul(u_modelViewProj, vec4(a_position, 0.0, 1.0) );
     vec3 rgb_color = hsv2rgb(a_color0);
     v_color0 = vec4(rgb_color, a_color0.a);
 }

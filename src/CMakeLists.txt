@@ -23,7 +23,7 @@ set_target_properties(baya PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${TargetName}/"    
 )
 
-target_sources(baya PRIVATE FILE_SET CXX_MODULES FILES "baya.ixx" "window.ixx" "camera.ixx")
+target_sources(baya PRIVATE FILE_SET CXX_MODULES FILES "baya.ixx" "window.ixx" "camera.ixx" "node.ixx" "renderable.ixx" "scene.ixx")
 
 target_include_directories(baya PRIVATE 
 			"${LIBS_DIR}/bx/include"

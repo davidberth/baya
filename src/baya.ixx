@@ -15,8 +15,10 @@
 
 
 export module baya;
+
 import window;
 import camera;
+import scene;
 
 
 bgfx::VertexBufferHandle m_vbh;
@@ -277,6 +279,15 @@ export void main_loop()
 
 	float rot = 0.0f;
 
+	Scene* scene = new Scene();
+
+
+
+	
+
+
+
+
 	/*
 	uint8_t* data;
 	int32_t awidth;
@@ -376,6 +387,9 @@ export void main_loop()
 
 
 	}
+
+	delete scene;
+
 	return;
 }
 

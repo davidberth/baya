@@ -19,6 +19,7 @@ export module baya;
 import window;
 import camera;
 import scene;
+import vertex;
 
 
 bgfx::VertexBufferHandle m_vbh;
@@ -37,40 +38,10 @@ bool check_state = false;
 
 Camera camera;
 
-struct PosColorVertex {
-	// 2d space position
-	float m_x;
-	float m_y;
-	// color value
-	uint8_t m_hue;
-	uint8_t m_saturation;
-	uint8_t m_value;
-	uint8_t m_alpha;
-;
 
-	static void init() {
-		// start the attribute declaration
-		ms_decl
-			.begin()
-			// Has three float values that denote position
-			.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-			// and a uint8 color value that denotes color
-			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-			.end();
-	};
 
-	static bgfx::VertexLayout ms_decl;
-};
 
-bgfx::VertexLayout PosColorVertex::ms_decl;
 
-PosColorVertex s_cubeVertices[] =
-{
-	{  0.5f,  0.5f, 0, 255, 255, 255},
-	{  0.5f, -0.5f, 15, 255, 255, 255},
-	{ -0.5f, -0.5f, 55, 255, 122, 255},
-	{ -0.5f,  0.5f, 100, 255, 125, 255},
-};
 
 const uint16_t s_cubeTriList[] =
 {
@@ -88,28 +59,7 @@ const uint16_t s_cubeLineList[] =
 
 
 
-bgfx::ShaderHandle loadShader(const char* _name) {
-	std::ifstream file(_name, std::ios::binary | std::ios::ate);
-	if (!file.is_open()) {
-		std::cerr << "Failed to open shader file: " << _name << std::endl;
-		return BGFX_INVALID_HANDLE;
-	}
 
-	std::streamsize fileSize = file.tellg();
-	file.seekg(0, std::ios::beg);
-
-	std::vector<char> data(fileSize);
-	if (!file.read(data.data(), fileSize)) {
-		std::cerr << "Failed to read shader file: " << _name << std::endl;
-		return BGFX_INVALID_HANDLE;
-	}
-
-	const bgfx::Memory* mem = bgfx::copy(data.data(), static_cast<uint32_t>(fileSize));
-	bgfx::ShaderHandle handle = bgfx::createShader(mem);
-	bgfx::setName(handle, _name);
-
-	return handle;
-}
 
 
 export int init_game()
@@ -141,34 +91,19 @@ export int init_game()
 	camera.set_window_size(width, height);
 	camera.set_height(3.0f);
 
-	PosColorVertex::init();
-	m_vbh = bgfx::createVertexBuffer(
-		// Static data can be passed with bgfx::makeRef
-		bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)),
-		PosColorVertex::ms_decl
-	);
 
-	m_ibh = bgfx::createIndexBuffer(
-		// Static data can be passed with bgfx::makeRef
-		bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
-	);
 
-	m_ibhl = bgfx::createIndexBuffer(
-		// Static data can be passed with bgfx::makeRef
-		bgfx::makeRef(s_cubeLineList, sizeof(s_cubeLineList))
-	);
+	//vsh = loadShader("shaders\\v_simple.bin");
+	//fsh = loadShader("shaders\\f_simple.bin");
 
-	vsh = loadShader("shaders\\v_simple.bin");
-	fsh = loadShader("shaders\\f_simple.bin");
+	//m_program = bgfx::createProgram(vsh, fsh, true);
 
-	m_program = bgfx::createProgram(vsh, fsh, true);
+	//vshl = loadShader("shaders\\v_simple_edge.bin");
+	//fshl = loadShader("shaders\\f_simple_edge.bin");
 
-	vshl = loadShader("shaders\\v_simple_edge.bin");
-	fshl = loadShader("shaders\\f_simple_edge.bin");
+	//m_programl = bgfx::createProgram(vshl, fshl, true);
 
-	m_programl = bgfx::createProgram(vshl, fshl, true);
-
-	imguiCreate(20.0f);
+	imguiCreate(38.0f);
 
 	ImGuiStyle& style = ImGui::GetStyle();
 
@@ -282,37 +217,11 @@ export void main_loop()
 	Scene* scene = new Scene();
 
 
-
-	
-
-
-
-
-	/*
-	uint8_t* data;
-	int32_t awidth;
-	int32_t aheight;
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->GetTexDataAsRGBA32(&data, &awidth, &aheight);
-	auto tex = bgfx::createTexture2D(
-		(uint16_t)width
-		, (uint16_t)height
-		, false
-		, 1
-		, bgfx::TextureFormat::BGRA8
-		, BGFX_STATE_BLEND_SRC_ALPHA | BGFX_STATE_BLEND_INV_SRC_ALPHA
-		, bgfx::copy(data, width * height * 4)
-	);
-	io.Fonts->SetTexID((void*)tex.idx);
-	*/
-
 	while (!window_should_close())
 	{
 		poll_events();
 
 
-
-		
 
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
@@ -397,9 +306,7 @@ export void cleanup()
 {
 	bgfx::destroy(m_vbh);
 	bgfx::destroy(m_ibh);
-	bgfx::destroy(m_program);
-	bgfx::destroy(vsh);
-	bgfx::destroy(fsh);
+
 
 	imguiDestroy();
 

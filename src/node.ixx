@@ -2,6 +2,7 @@ module;
 
 #include <bx/bx.h>
 #include <bx/math.h>
+#include <bgfx/bgfx.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -22,6 +23,8 @@ public:
 	std::vector<Node*> children;
 	std::string id;
 
+	Renderable* rdbl = nullptr;
+
 	Node(std::string id)
 	{
 		this->id = id;
@@ -31,6 +34,10 @@ public:
 
 	~Node()
 	{
+		if (rdbl != nullptr)
+		{
+			delete rdbl;
+		}
 		for (Node* child : children)
 		{
 			delete child;
@@ -62,6 +69,27 @@ public:
 		Node* child = new Node(id + '_' + child_id);
 		children.push_back(child);
 		return child;
+	}
+
+	void add_renderable(Renderable *rd)
+	{
+		rdbl = rd;
+	}
+
+	void render()
+	{
+		if (rdbl != nullptr)
+		{
+			// update the transform
+			get_transform();
+			bgfx::setTransform(local_transform);
+			
+			rdbl->render();
+		}
+		for (Node* child : children)
+		{
+			child->render();
+		}
 	}
 
 };

@@ -1,4 +1,3 @@
-set(LIBS_DIR "c:/db/libs")
 # Define the paths to the debug and release versions of the libraries
 set(BGFX_DEBUG_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bgfxDebug.lib")
 set(BGFX_RELEASE_LIB "${LIBS_DIR}/bgfx/.build/win64_vs2022/bin/bgfxRelease.lib")
@@ -23,7 +22,7 @@ set_target_properties(baya PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${TargetName}/"    
 )
 
-target_sources(baya PRIVATE FILE_SET CXX_MODULES FILES "baya.ixx" "window.ixx" "camera.ixx" "node.ixx" "renderable.ixx" "scene.ixx")
+target_sources(baya PRIVATE FILE_SET CXX_MODULES FILES "baya.ixx" "window.ixx" "camera.ixx" "node.ixx" "renderable.ixx" "scene.ixx" "vertex.ixx" "shader.ixx")
 
 target_include_directories(baya PRIVATE 
 			"${LIBS_DIR}/bx/include"

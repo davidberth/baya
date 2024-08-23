@@ -1,6 +1,3 @@
-set(LIBS_DIR "c:/db/libs")
-
-# Add source to this project's executable.
 add_library(imgui "imguio.cpp" "imgui.cpp" "imgui_draw.cpp" "imgui_widgets.cpp" "imgui_tables.cpp")
 
 target_include_directories(imgui PRIVATE 

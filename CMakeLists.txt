@@ -4,6 +4,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
 project (baya LANGUAGES CXX)
 
+set(LIBS_DIR "" CACHE PATH "Path to the directory containing the external dependencies")
+
+
 # Correct placement and setting for static runtime library
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

@@ -5,6 +5,7 @@ module;
 export module scene;
 
 import node;
+import renderable;
 
 export class Scene {
 
@@ -15,20 +16,9 @@ public:
 	{
 		parent = new Node("root");
 
-		Node* sun = parent->add_child("sun");
-		Node* moon = parent->add_child("moon");
-		Node* crater = moon->add_child("crater");
-		Node* asteroid = parent->add_child("asteroid");
-		Node* planet = parent->add_child("planet");
-		Node* continent = planet->add_child("continent");
-		Node* country = continent->add_child("country");
-		Node* city = country->add_child("city");
-		Node* building = city->add_child("building");
-		Node* room = building->add_child("room");
-		Node* table = room->add_child("table");
-		Node* chair = room->add_child("chair");
-		Node* lamp = room->add_child("lamp");
-		Node* book = room->add_child("book");
+		Node* square = parent->add_child("square");
+		//Renderable *square_rd = square->add_renderable("square");
+
 	}
 
 	~Scene()

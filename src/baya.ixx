@@ -22,43 +22,10 @@ import scene;
 import vertex;
 
 
-bgfx::VertexBufferHandle m_vbh;
-bgfx::IndexBufferHandle m_ibh;
-bgfx::IndexBufferHandle m_ibhl;
-bgfx::ProgramHandle m_program; // we create a program handle
-bgfx::ProgramHandle m_programl;
-bgfx::ShaderHandle vsh;
-bgfx::ShaderHandle fsh;
-
-bgfx::ShaderHandle vshl;
-bgfx::ShaderHandle fshl;
-
 
 bool check_state = false;
 
 Camera camera;
-
-
-
-
-
-
-const uint16_t s_cubeTriList[] =
-{
-	0,1,3,
-	1,2,3
-};
-
-const uint16_t s_cubeLineList[] = 
-{
-	0,1,
-	1,2,
-	2,3,
-	3,0
-};
-
-
-
 
 
 
@@ -193,7 +160,7 @@ export int init_game()
 	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.196078434586525f, 0.1764705926179886f, 0.5450980663299561f, 0.501960813999176f);
 
 
-
+	init_vertex_layout();
 	return 0;
 }
 
@@ -208,7 +175,7 @@ export void main_loop()
 	bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
 	bgfx::touch(0);
-	ImGui::GetStyle().ScaleAllSizes(1.0f);
+	// ImGui::GetStyle().ScaleAllSizes(1.0f);
 
 	double mx, my;
 
@@ -240,6 +207,9 @@ export void main_loop()
 		camera.apply();
 
 		bgfx::touch(kClearView);
+
+		/*
+
 		float mtx[16];
 		bx::mtxRotateZ(mtx, rot);
 
@@ -253,6 +223,8 @@ export void main_loop()
 
 		// Set model matrix for rendering.
 		bgfx::setTransform(mtx);
+
+		
 
 		// Set vertex and index buffer.
 		bgfx::setVertexBuffer(0, m_vbh);
@@ -277,6 +249,10 @@ export void main_loop()
 			| BGFX_STATE_MSAA | BGFX_STATE_LINEAA);
 
 		bgfx::submit(0, m_programl);
+
+		*/
+
+		scene->render();
 		
 		get_mouse_pos(mx, my);
 		uint8_t button_state = get_mouse_button_state();
@@ -304,9 +280,6 @@ export void main_loop()
 
 export void cleanup()
 {
-	bgfx::destroy(m_vbh);
-	bgfx::destroy(m_ibh);
-
 
 	imguiDestroy();
 

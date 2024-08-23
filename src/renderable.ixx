@@ -23,7 +23,7 @@ export class Renderable {
 
 public:
 
-	Renderable(std::string id, Vertex* vertices, uint16_t* indices, uint32_t num_vertices, uint32_t num_indices)
+	Renderable(std::string id, Vertex* vertices, uint16_t* indices, uint32_t vertsize, uint32_t indexsize)
 	{
 		this->id = id;
 		this->vertices = vertices;
@@ -34,13 +34,13 @@ public:
 		
 		vbh = bgfx::createVertexBuffer(
 			// Static data can be passed with bgfx::makeRef
-			bgfx::makeRef(vertices, sizeof(Vertex) * num_vertices),
+			bgfx::makeRef(vertices, vertsize),
 			Vertex::ms_decl
 		);
 
 		ibh = bgfx::createIndexBuffer(
 			// Static data can be passed with bgfx::makeRef
-			bgfx::makeRef(indices, sizeof(uint16_t) * num_indices)
+			bgfx::makeRef(indices, indexsize)
 		);
 
 	}
@@ -65,8 +65,8 @@ public:
 
 	~Renderable()
 	{
-		delete[] vertices;
-		delete[] indices;
+		//delete[] vertices;
+		//delete[] indices;
 	}
 
 	void set_shader(Shader* shader)

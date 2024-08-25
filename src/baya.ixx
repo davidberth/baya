@@ -267,7 +267,6 @@ export void main_loop()
 
 		ImGui::Render();
 		imguiEndFrame();
-
 		bgfx::frame();
 
 

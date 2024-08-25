@@ -37,6 +37,10 @@ if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 	target_compile_options(baya PUBLIC "/Zc:preprocessor")
 endif()
 
+if ((MSVC))
+	target_include_directories(baya PRIVATE "${LIBS_DIR}/bx/include/compat/msvc")
+endif()
+
 # Link the appropriate libraries based on the build type
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_link_libraries(baya PRIVATE ${BGFX_DEBUG_LIB} ${BX_DEBUG_LIB} ${BIMG_DEBUG_LIB} ${GLFW_DEBUG_LIB} imgui/imgui)

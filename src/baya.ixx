@@ -13,6 +13,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "configure.h"
+
 
 export module baya;
 
@@ -50,10 +52,21 @@ export int init_game()
 	init.resolution.width = (uint32_t)width;
 	init.resolution.height = (uint32_t)height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
-	
-	
-	
-	init.type = bgfx::RendererType::Direct3D11;
+
+	std::string renderer = RENDERER;
+	if (renderer == "direct3d11")
+	{
+		init.type = bgfx::RendererType::Direct3D11;
+	}
+	else if (renderer == "vulkan")
+	{
+		init.type = bgfx::RendererType::Vulkan;
+}
+	else
+	{
+		init.type = bgfx::RendererType::OpenGL;
+	}
+
 	if (!bgfx::init(init))
 		return 1;
 
@@ -62,16 +75,6 @@ export int init_game()
 	camera.set_height(3.0f);
 
 
-
-	//vsh = loadShader("shaders\\v_simple.bin");
-	//fsh = loadShader("shaders\\f_simple.bin");
-
-	//m_program = bgfx::createProgram(vsh, fsh, true);
-
-	//vshl = loadShader("shaders\\v_simple_edge.bin");
-	//fshl = loadShader("shaders\\f_simple_edge.bin");
-
-	//m_programl = bgfx::createProgram(vshl, fshl, true);
 
 	imguiCreate(38.0f);
 

@@ -31,6 +31,7 @@ target_include_directories(baya PRIVATE
 			"${LIBS_DIR}/glfw/include"
 			"${LIBS_DIR}/bgfx/examples/common/imgui"
 			"${LIBS_DIR}/bgfx/3rdparty"
+			"${CMAKE_BINARY_DIR}/configure"
 )
 if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
 	target_compile_options(baya PUBLIC "/Zc:__cplusplus")

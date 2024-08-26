@@ -50,7 +50,10 @@ export int init_game()
 	init.resolution.width = (uint32_t)width;
 	init.resolution.height = (uint32_t)height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
-	init.type = bgfx::RendererType::Vulkan;
+	
+	
+	
+	init.type = bgfx::RendererType::Direct3D11;
 	if (!bgfx::init(init))
 		return 1;
 

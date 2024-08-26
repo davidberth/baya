@@ -4,6 +4,7 @@ module;
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
+#include "configure.h"
 #include <iostream>
 
 export module window;
@@ -109,7 +110,13 @@ export bool init_window()
 		
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	window = glfwCreateWindow(100, 100, "Baya version 0.1.0", nullptr, nullptr);
+
+	static std::string caption = APPNAME;
+	caption += " Version: ";
+	caption += APPVERSION;
+	caption += " Renderer: ";
+	caption += RENDERER;
+	window = glfwCreateWindow(100, 100, caption.c_str(), nullptr, nullptr);
 	
 	if (!window)
 		return false;

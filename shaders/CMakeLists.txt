@@ -1,6 +1,11 @@
 # Define the shader compiler executable
 set(SHADER_COMPILER ${CMAKE_SOURCE_DIR}/../libs/bgfx/.build/win64_vs2022/bin/shadercRelease.exe)
-set(SHADER_PROFILE spirv)
+if (RENDERER STREQUAL "vulkan")
+	set(SHADER_PROFILE spirv)
+elseif(RENDERER STREQUAL "direct3d11")
+	set(SHADER_PROFILE s_5_0)
+endif()
+
 
 # Define the output directories for debug and release builds
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/shaders)
